@@ -296,7 +296,6 @@ void win_show(WINDOW *win, PANEL_DATA *POA, int number)
         mvwaddch(win, 2, width-9, ACS_TTEE);
         mvwaddch(win, 3, width-9, ACS_VLINE);
         mvwaddch(win, 4, width-9, ACS_BTEE);
-        mvwaddch(win, 1, 1, ACS_HLINE);
         printShifter(win, POA[number].keyBoardInput, 3, 1, POA[number].inputShift, width-10);
         printScreen(number);
 
