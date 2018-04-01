@@ -9,7 +9,7 @@ typedef struct {
         uint8_t valid;
         int x, y, w, h;
         char label[80];
-        char inputBuffer[256];
+        char inputBuffer[128];
         char keyBoardInput[80];
         line_t lines[64];
         int label_color;
@@ -35,11 +35,14 @@ void append(char* s, char c, int maxLen);
 void printShifter(WINDOW *win, char *str, int y, int x, int shift, int len);
 void printScreen (int monitorNumber);
 void clearLinesa(int monitorNumber);
-void writeLine(int monitorNumber, char *line);
+void writeLine(int monitorNumber, char *line, int lineNumber);
 void *thread(void *vargp);
 void shiftLines(line_t *lines);
 int displayActive();
 void endDisplay();
+void appendString(char *original, char *add, int length);
+void addLine(int monitorNumber, char *line);
+char *readInput(int monitorNumber);
 
 
 #endif

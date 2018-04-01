@@ -9,6 +9,7 @@
 
 #include "Display.h"
 #include <pthread.h>
+#include <stdarg.h>
 
 int row,col;
 
@@ -18,7 +19,7 @@ PANEL *stack_top;
 WINDOW *temp_win, *old_win;
 uint8_t resized_flag = 0;
 #define MAX_MONITORS 6
-int monitorNumber = 0;
+int monitorNumber = -1;
 
 int quitFlag = 0;
 MEVENT event;
@@ -30,7 +31,6 @@ pthread_mutex_t m = PTHREAD_MUTEX_INITIALIZER;
 void *thread(void *vargp)
 {
         sleep(1);
-        writeLine(1,"HERE");
         while(quitFlag == 0) {
                 pthread_mutex_lock(&m);
                 if(updateDisplay(3) == 1) {
@@ -67,37 +67,19 @@ void initDisplay(int number){
         init_pair(3, COLOR_BLUE, COLOR_BLACK);
         init_pair(4, COLOR_CYAN, COLOR_BLACK);
 
-        temp_win = newwin(0, 0, 0, 0);
-        POA[0].x = 0;
-        POA[0].y = 0;
-        POA[0].h = row;
-        POA[0].w = col;
-        POA[0].label_color = 1;
-        strcpy(POA[0].label, "TEST");
-        POA[0].panel = new_panel(temp_win);
-        POA[0].valid = TRUE;
-        POA[0].inputShift = 0;
+        // temp_win = newwin(0, 0, 0, 0);
+        // POA[0].x = 0;
+        // POA[0].y = 0;
+        // POA[0].h = row;
+        // POA[0].w = col;
+        // POA[0].label_color = 1;
+        // strcpy(POA[0].label, "Raspberry Pi 1");
+        // POA[0].panel = new_panel(temp_win);
+        // POA[0].valid = TRUE;
+        // POA[0].inputShift = 0;
         update_panels();
         clearLinesa(0);
-        writeLine(0, "Hello World");
         pthread_create(&tid, NULL, thread, NULL);
-        int i;
-        for(i = 0; i < 50; i++) {
-                writeLine(0, "Filler");
-        }
-        // writeLine(0, "a");
-        // writeLine(0, "b");
-        // writeLine(0, "Line3");
-        // writeLine(0, "Line4");
-        // writeLine(0, "Line5");
-        // writeLine(0, "Line6");
-        // writeLine(0, "Line7");
-        // writeLine(0, "Line8");
-        // writeLine(0, "Line9");
-        // writeLine(0, "Line10");
-        // writeLine(0, "This Line is way too long to fit into one line!!!");
-
-
         initMonitors();
         refreshMonitors();
 }
@@ -114,7 +96,7 @@ void addMonitor(char *label, int color){
         POA[monitorNumber].h = row;
         POA[monitorNumber].y = 0;
         strcpy(POA[monitorNumber].label, label);
-        strcpy(POA[monitorNumber].keyBoardInput, "hello");
+        // strcpy(POA[monitorNumber].keyBoardInput, "hello");
 
         POA[monitorNumber].label_color = color;
         temp_win = newwin(0, 0, 0, 0);
@@ -124,6 +106,7 @@ void addMonitor(char *label, int color){
         POA[monitorNumber].valid = TRUE;
 
         resizeMonitors();
+        refreshMonitors();
 
 }
 void resizeMonitors(){
@@ -157,8 +140,7 @@ void refreshMonitors(){
         doupdate();
 }
 void initMonitors(){
-        addMonitor("Raspberry 2", 3);
-        addMonitor("Arduino", 2);
+
         mousemask(ALL_MOUSE_EVENTS, NULL);
 }
 void clearMemory(){
@@ -174,6 +156,7 @@ void clearMemory(){
 int mouseX = 0;
 int mouseY = 0;
 int userInput = 0;
+int clickCounter = 0;
 char inputBuffer[80];
 int selectedMonitor;
 int updateDisplay(int number){
@@ -191,18 +174,18 @@ int updateDisplay(int number){
                         int monitorWidth = col/(monitorNumber+1);
                         for(i = 0; i<6; i++) {
                                 if(POA[i].valid == TRUE) {
-                                        POA[i].label_color = 0;
+                                        // POA[i].label_color = 0;
                                 }
                         }
                         for(i = 0;; i++) {
                                 if(mouseX < monitorWidth * i) {
-                                        POA[i-1].label_color = 3;
+                                        // POA[i-1].label_color = 3;
                                         break;
                                 }
                         }
-                        //if the monitor switched
+                        // if the monitor switched
                         if(i != selectedMonitor) {
-                                sprintf(POA[0].label, "Switched: %d", selectedMonitor);
+                                // sprintf(POA[0].label, "Switched: %d", selectedMonitor);
                                 // memset(POA[selectedMonitor - 1].keyBoardInput,0,80);
                         }
                         selectedMonitor = i;
@@ -210,19 +193,21 @@ int updateDisplay(int number){
                         //correct mouse height
                         if(mouseY >= 2  && mouseY <= 4) {
                                 if(mouseX % monitorWidth > monitorWidth -7) {
-                                        strcpy(POA[1].label, "Enter Clicked");
+                                        // strcpy(POA[1].label, "Enter Clicked");
                                         // sprintf(POA[1].label, "Enter Clicked");
                                         userInput = 0;
+                                        POA[selectedMonitor - 1].inputShift = 0;
+                                        appendString(POA[selectedMonitor - 1].inputBuffer, POA[selectedMonitor - 1].keyBoardInput, 128);
                                         memset(POA[selectedMonitor - 1].keyBoardInput,0,80);
                                 }
                                 else{
-                                        strcpy(POA[1].label, "Text Field Clicked");
+                                        // strcpy(POA[1].label, "Text Field Clicked");
                                         // sprintf(POA[1].label, "%s", "Text Field Clicked");
                                         userInput = 1;
                                 }
                         }
                         else{
-                                strcpy(POA[1].label, "Enter Not Clicked");
+                                // strcpy(POA[1].label, "Enter Not Clicked");
                                 // sprintf(POA[1].label, "Enter Not Clicked");
                                 userInput = 0;
                         }
@@ -249,6 +234,9 @@ int updateDisplay(int number){
                 if(ch != -1 && ch != 409) {
                         if(ch == 127) {
                                 POA[selectedMonitor - 1].keyBoardInput[strlen(POA[selectedMonitor - 1].keyBoardInput) - 1] = 0;
+                                if(POA[selectedMonitor - 1].inputShift != 0) {
+                                        POA[selectedMonitor - 1].inputShift--;
+                                }
                         }
                         else if(ch == KEY_RIGHT) {
                                 if(strlen(POA[selectedMonitor - 1].keyBoardInput) - POA[selectedMonitor - 1].inputShift >
@@ -265,10 +253,19 @@ int updateDisplay(int number){
                                 }
                         }
                         else if(ch == 10) {
+                                POA[selectedMonitor - 1].inputShift = 0;
+                                POA[selectedMonitor - 1].inputShift = 0;
+                                appendString(POA[selectedMonitor - 1].inputBuffer, POA[selectedMonitor - 1].keyBoardInput, 128);
+
                                 memset(POA[selectedMonitor - 1].keyBoardInput, 0, 80 * sizeof(char));
                         }
                         else{
+
                                 append(POA[selectedMonitor - 1].keyBoardInput, (char)ch, 79);
+                                if(strlen(POA[selectedMonitor - 1].keyBoardInput) > POA[selectedMonitor - 1].w - 11
+                                   && strlen(POA[selectedMonitor - 1].keyBoardInput) < 79) {
+                                        POA[selectedMonitor - 1].inputShift++;
+                                }
                         }
                         // sprintf(POA[selectedMonitor - 1].keyBoardInput, "%s", inputBuffer);
                         refreshMonitors();
@@ -343,6 +340,28 @@ void append(char* s, char c, int maxLen) {
         }
 }
 
+void appendString(char *original, char *add, int length){
+        int addLength = strlen(add);
+        int freeSpace = length - strlen(original) - 1;
+
+        //free up space for the new string
+        if(freeSpace < addLength) {
+                int additionalSpace = addLength - freeSpace;
+                //length - 1 because string length starts at 1, while inedex starts at 0
+                int i;
+                for(i = additionalSpace; i < length - 1; i++) {
+                        original[i - additionalSpace] = original[i];
+                }
+                for(i = length - additionalSpace - 1; i < length-1; i++) {
+                        original[i] = 0;
+                }
+        }
+
+        //add stuff to the end
+        strcat(original, add);
+}
+
+
 void printShifter(WINDOW *win, char *str, int y, int x, int shift, int len){
         int i;
         char newStr[len];
@@ -352,37 +371,57 @@ void printShifter(WINDOW *win, char *str, int y, int x, int shift, int len){
         newStr[i]='\0';
         mvwprintw(win, y, x, newStr);
 }
-void writeLine(int monitorNumber, char *line){
-        //get current available line
+void writeLine(int monitorNumber, char *line, int lineNumber){
+
         int i;
         int j;
         int k;
-        int lineLength = POA[monitorNumber].w -1;
+        // int endReached = 0;
+
+        // else{
+        //         for(i = 0; i < 64; i++) {
+        //                 if(strlen(POA[monitorNumber].lines[i].line) == 0) {
+        //                         break;
+        //                 }
+        //         }
+        //
+        //         if(i >= 63) {
+        //                 shiftLines(POA[monitorNumber].lines);
+        //                 i--;
+        //                 endReached = 1;
+        //         }
+        // }
+        //get current available line
+
+        int lineLength = POA[monitorNumber].w -2;
 
         // POA[monitorNumber].lines[0].line;
         // strlen(POA[monitorNumber].lines[0].line);
-        for(i = 0; i < 64; i++) {
-                if(strlen(POA[monitorNumber].lines[i].line) == 0) {
-                        break;
-                }
-        }
 
-        if(i > 63) {
-                shiftLines(POA[monitorNumber].lines);
-                i--;
-        }
         for(k = 0;; k++) {
-                for(j=0; (j < lineLength && j < strlen(line)); j++) {
-                        POA[monitorNumber].lines[i + k].line[j] = line[j + k * lineLength];
+
+                char tempLine[80];
+                memset(tempLine, 0, 80);
+                for(i = 0; (i < lineLength && i + (k *lineLength) < strlen(line)); i++) {
+                        tempLine[i] = line[i + (k * lineLength)];
                 }
+
+
+                if(lineNumber != -1) {
+                        memset(POA[monitorNumber].lines[lineNumber].line, 0, 64);
+                        strcpy(POA[monitorNumber].lines[lineNumber].line, tempLine);
+                }
+                else{
+                        addLine(monitorNumber, tempLine);
+                }
+                // for(j=0; (j < lineLength && j < strlen(line)); j++) {
+                //         POA[monitorNumber].lines[i + k].line[j] = line[j + k * lineLength];
+                //         // i++;
+                // }
                 //end if remaining line has less than line length number of characters
                 if((k+1) * lineLength > strlen(line)) {
                         break;
                 }
-
-                // if(i == 63) {
-                //         shiftLines(POA[monitorNumber].lines);
-                // }
 
         }
         printScreen(monitorNumber);
@@ -416,15 +455,17 @@ void printScreen(int monitorNumber){
         //gets current line
         int i;
         int j;
+        int counter = 0;
         for(i = 0; i < 64; i++) {
-                if(strlen(POA[monitorNumber].lines[i].line) == 0) {
-                        break;
+                if(strlen(POA[monitorNumber].lines[i].line) != 0) {
+                        counter = i + 1;
                 }
         }
+
         //if number of lines in buffer is less/greater than screen lines
 
-        if(i < POA[monitorNumber].h - 5) {
-                for(j = 0; j < i; j++) {
+        if(counter < POA[monitorNumber].h - 5) {
+                for(j = 0; j < counter; j++) {
                         // refreshMonitors();
                         mvwprintw(panel_window(POA[monitorNumber].panel), j + 5, 1,  "%s", POA[monitorNumber].lines[j].line);
 
@@ -432,7 +473,39 @@ void printScreen(int monitorNumber){
         }
         else{
                 for(j = POA[monitorNumber].h-6; j > 0; j--) {
-                        mvwprintw(panel_window(POA[monitorNumber].panel), j+4, 1, "%s", POA[monitorNumber].lines[j+i - POA[monitorNumber].h +4].line);
+                        mvwprintw(panel_window(POA[monitorNumber].panel), j+4, 1, "%s", POA[monitorNumber].lines[j+counter - POA[monitorNumber].h +5].line);
                 }
         }
+}
+
+void addLine(int monitorNumber, char *line){
+        int i;
+        int numLines = 0;
+        for(i = 0; i < 64; i++) {
+                if(strlen(POA[monitorNumber].lines[i].line) != 0) {
+                        numLines = i+1;
+                }
+        }
+
+        //i gives current line number
+
+        if(numLines == 64) {
+                shiftLines(POA[monitorNumber].lines);
+                memset(POA[monitorNumber].lines[numLines - 1].line, '\0', 64);
+                strcpy(POA[monitorNumber].lines[numLines - 1].line, line);
+        }
+        else{
+                memset(POA[monitorNumber].lines[numLines].line, '\0', 64);
+                strcpy(POA[monitorNumber].lines[numLines].line, line);
+        }
+
+}
+
+char *readInput(int monitorNumber){
+        static char s[128];
+        strcpy(s, POA[monitorNumber].inputBuffer);
+
+        memset(POA[monitorNumber].inputBuffer, '\0', 128);
+
+        return s;
 }
