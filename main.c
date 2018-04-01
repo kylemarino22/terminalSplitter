@@ -25,9 +25,6 @@ int main(int argc,char *argv[])
         addMonitor("Arduino", 2);
         while (displayActive()) {
 
-
-                // if(updateDisplay(number) == 1) {
-
                 sprintf(text, "Hello %d", i);
                 writeLine(0, text,-1);
                 writeLine(1, readInput(1), -1);

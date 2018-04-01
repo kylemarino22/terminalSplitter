@@ -33,6 +33,7 @@ void *thread(void *vargp)
         sleep(1);
         while(quitFlag == 0) {
                 pthread_mutex_lock(&m);
+                usleep(20);
                 if(updateDisplay(3) == 1) {
                         quitFlag = 1;
                 }
@@ -49,6 +50,7 @@ int displayActive(){
 
 void endDisplay(){
         pthread_join(tid, NULL);
+        usleep(500);
         endwin();
 }
 
@@ -223,8 +225,8 @@ int updateDisplay(int number){
                         break;
 
                 case 'q':
-                        clearMemory();
-                        endwin();
+                        // clearMemory();
+                        // endwin();
                         return 1;
                         break;
                 }
