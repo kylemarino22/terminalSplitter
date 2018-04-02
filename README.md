@@ -9,7 +9,7 @@ Terminal output is usually limited to a single screen, and to have different out
 Using terminalSplitter is very simple. To enter typing mode, click on the box to the left of any Enter button to select the keyboard input. You can type here and to send characters to the input buffer, either press the enter key or click the enter button on the screen. This input buffer can later be read with the function ```readInput();``` Click anywhere else on the screen to leave typing mode. When not in typing mode, ressing ```r``` will refresh the page, and pressing ```q``` will exit the program. 
 
 ### Example Layout
-![Demo of Program] (https://i.imgur.com/c7aVRfI.png)
+![Demo of Program] (https://i.imgur.com/3pE5aU2.png)
 
 (I am using the agnoster theme for Oh My Zsh. Your terminal output may look different.)
 
