@@ -12,7 +12,6 @@
 
 int number = 3;
 
-char test[20];
 int main(int argc,char *argv[])
 {
         int counter = 0;
@@ -20,12 +19,12 @@ int main(int argc,char *argv[])
         char text[10];
 
         initDisplay(number);
-        addMonitor("Raspberry 1", 1);
-        addMonitor("Raspberry 2", 3);
-        addMonitor("Arduino", 2);
+        addMonitor("Data Stream", 1);
+        addMonitor("Menu", 3);
+        addMonitor("Debug", 2);
         while (displayActive()) {
 
-                sprintf(text, "Hello %d", i);
+                sprintf(text, "%d", i);
                 writeLine(0, text,-1);
                 writeLine(1, readInput(1), -1);
                 writeLine(2, readInput(2), -1);
