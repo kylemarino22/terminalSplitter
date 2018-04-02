@@ -10,6 +10,7 @@ Using terminalSplitter is very simple. To enter typing mode, click on the box to
 
 ### Example Layout
 ![Demo of Program] (https://i.imgur.com/c7aVRfI.png)
+
 (I am using the agnoster theme for Oh My Zsh. Your terminal output may look different.)
 
 ### Implementation
