@@ -18,7 +18,7 @@ To integrate terminalSplitter into your program is very simple. Add the dislplay
 
 ##### terminalSplitter functions
 To start terminalSplitter, run the code:
-```
+```c
 initDisplay(3);
 addMonitor("Data Stream", 1);
 addMonitor("Menu", 3);
@@ -36,31 +36,31 @@ addMonitor("Debug", 2);
 ```
 
 To print to a monitor, use the function:
-```
+```c
 writeLine(0, text, -1);
 ```
 ```writeLine()``` takes in the monitor number to print in, the text to print, and the line number to print on. -1 for the line number will print a new line. 
 
 To read from the input buffer, use the function:
-```
+```c
 readInput(1);
 ```
 ```readInput()``` takes in the monitor number to read from, and returns the character input buffer. The buffer is cleared once read from. 
 
 To check if the display is still active, use the function: 
-```
+```c
 dislpayActive();
 ```
 This returns a 1 if the display is active and 0 if it has quit. 
 
 End terminalSplitter with the function:
-```
+```c
 endDisplay();
 ```
 This ends the multi-threading and cleans up before quitting.
 ##### Example main.c
 The included main.c file uses all of these functions to create a simple program:
-```
+```c
 int number = 3;
 int main(int argc,char *argv[])
 {
