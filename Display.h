@@ -26,7 +26,7 @@ void print_in_middle(WINDOW *win, int starty, int startx, int width, char *strin
 void thing(int sig);
 void destroy_win(WINDOW *local_win);
 void middleShow(WINDOW *win, char *label, int label_color);
-void addMonitor(char *label, int color);
+void addMonitor(const char *label, int color);
 void refreshMonitors();
 void resizeMonitors();
 void initMonitors();
