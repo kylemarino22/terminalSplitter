@@ -87,7 +87,7 @@ void initDisplay(int number){
 }
 int counter = 0;
 
-void addMonitor(char *label, int color){
+void addMonitor(const char *label, int color){
         monitorNumber++;
 
         // printf("here: %d\n", monitorNumber);
